@@ -1,7 +1,7 @@
 
 
 set(COMMON_SOURCES  "src/main.cpp" "include/IDisplay.h" )
-set(PLATFORM_SOURCES)
+set(PLATFORM_SOURCES )
 if(UNIX)
 
 elseif(WIN32)
@@ -13,7 +13,9 @@ list(
 	"src/Win32/GL/wgl.c" 
 	"src/Win32/GL/wglext.h" 
 	"src/Win32/GL/glad/gl.h" 
-	"src/Win32/GL/glad/wgl.h" 
+	"src/Win32/GL/glad/wgl.h"
+	"src/Win32/OpenGLDisplayWin32.h"
+	"src/Win32/OpenGLDisplayWin32.cpp"
 )
 endif()
 add_library(${PROJECT_NAME} STATIC ${COMMON_SOURCES}  ${PLATFORM_SOURCES})
