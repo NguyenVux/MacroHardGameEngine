@@ -1,16 +1,22 @@
 
 
-file(GLOB_RECURSE CPP_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c*")
-file(GLOB_RECURSE HEADER_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h*")
+set(COMMON_SOURCES  "src/main.cpp" "include/IDisplay.h" )
+set(PLATFORM_SOURCES)
+if(UNIX)
 
-set(SOURCE_FILES ${CPP_FILES} ${HEADER_FILES})
-set(PROJECT_NAME MacroHardGameEngine)
+elseif(WIN32)
+list(
+	APPEND PLATFORM_SOURCES 
+	"src/Win32/Win32Display.cpp" 
+	"src/Win32/Win32Display.h" 
+	"src/Win32/GL/gl.c" 
+	"src/Win32/GL/wgl.c" 
+	"src/Win32/GL/wglext.h" 
+	"src/Win32/GL/glad/gl.h" 
+	"src/Win32/GL/glad/wgl.h" 
+)
+endif()
+add_library(${PROJECT_NAME} STATIC ${COMMON_SOURCES}  ${PLATFORM_SOURCES})
 
-foreach(source IN LISTS SOURCE_FILES)    
-	get_filename_component(source_path "${source}" PATH)
-	string(REPLACE "/" "\\" source_path_msvc "${source_path}")
-	source_group("${source_path_msvc}" FILES "${source}")
-endforeach()
-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
-
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_link_libraries(${PROJECT_NAME} "opengl32.lib")
