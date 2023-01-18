@@ -5,6 +5,13 @@ extern LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 
 
+Win32Display::Win32Display(std::string i_className):
+    m_DC(nullptr),
+    m_hwnd(nullptr)
+{
+    m_className = i_className;
+}
+
 bool Win32Display::Init(std::string i_title,uint32_t width, uint32_t height) {
     WNDCLASS window_class = {};
     window_class.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
@@ -12,7 +19,7 @@ bool Win32Display::Init(std::string i_title,uint32_t width, uint32_t height) {
     window_class.hInstance = GetModuleHandle(nullptr);
     window_class.hCursor = LoadCursor(0, IDC_ARROW);
     window_class.hbrBackground = 0;
-    window_class.lpszClassName = TEXT("Learning OpenGL");
+    window_class.lpszClassName = m_className.c_str();
     if (!RegisterClass(&window_class)) {
         return false;
     }
@@ -51,4 +58,10 @@ HWND& const Win32Display::GetWindowHandle()
 HDC& const Win32Display::GetDC()
 {
     return m_DC;
+}
+
+Win32Display::~Win32Display()
+{
+    ReleaseDC(m_hwnd, m_DC);
+    //DestroyWindow(m_hwnd);
 }

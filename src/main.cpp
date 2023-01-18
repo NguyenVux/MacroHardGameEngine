@@ -1,6 +1,6 @@
 #include "Win32/GL/wglext.h"
 #include <windows.h>
-#include "Win32/Win32Display.h"
+#include "Win32/OpenGLDisplayWin32.h"
 #include <iostream>
 
 
@@ -26,7 +26,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 int main() {
-    Win32Display wd;
+    OpenGLWin32Display wd("abc");
     wd.Init("Learning OpenGL",800,600);
     wd.Show();
     bool running = true;
