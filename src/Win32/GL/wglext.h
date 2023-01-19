@@ -19,8 +19,7 @@ extern "C" {
 #define WIN32_LEAN_AND_MEAN 1
 #include <windows.h>
 #endif
-#include "glad/gl.h"
-
+#include <GL/gl.h>
 #define WGL_WGLEXT_VERSION 20220530
 
 /* Generated C header for:

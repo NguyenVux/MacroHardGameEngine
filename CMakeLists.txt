@@ -10,11 +10,7 @@ list(
 	APPEND PLATFORM_SOURCES 
 	"src/Win32/Win32Display.cpp" 
 	"src/Win32/Win32Display.h" 
-	"src/Win32/GL/gl.c" 
-	"src/Win32/GL/wgl.c" 
 	"src/Win32/GL/wglext.h" 
-	"src/Win32/GL/glad/gl.h" 
-	"src/Win32/GL/glad/wgl.h"
 	"src/Win32/OpenGLDisplayWin32.h"
 	"src/Win32/OpenGLDisplayWin32.cpp"
 )
