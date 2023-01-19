@@ -2,8 +2,8 @@
 #include <windows.h>
 #include "Win32/OpenGLDisplayWin32.h"
 #include <iostream>
-
-
+#include <memory>
+extern std::weak_ptr<IDisplay> EntryPoint();
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -26,9 +26,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 int main() {
-    OpenGLWin32Display wd("abc");
-    wd.Init("Learning OpenGL",800,600);
-    wd.Show();
+    std::weak_ptr<IDisplay> display = ::EntryPoint();
+    bool isNotExpired = !display.expired();
+    if (isNotExpired)
+    {
+        std::shared_ptr<IDisplay> _display = display.lock();
+        _display->Show();
+    }
     bool running = true;
     while (running) {
         MSG msg;
