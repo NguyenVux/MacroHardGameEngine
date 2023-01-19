@@ -3,8 +3,9 @@
 #include "Win32/OpenGLDisplayWin32.h"
 #include <iostream>
 #include <memory>
-extern std::weak_ptr<IDisplay> EntryPoint();
-
+#include <chrono>
+extern void Update(std::chrono::duration<float> i_delta);
+extern void EntryPoint();
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	Win32Display* windowsExtraData = reinterpret_cast<Win32Display*>((LONG_PTR)GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -26,14 +27,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 int main() {
-    std::weak_ptr<IDisplay> display = ::EntryPoint();
-    bool isNotExpired = !display.expired();
-    if (isNotExpired)
-    {
-        std::shared_ptr<IDisplay> _display = display.lock();
-        _display->Show();
-    }
     bool running = true;
+    ::EntryPoint();
+    std::chrono::time_point lastFrameTime = std::chrono::system_clock::now();
     while (running) {
         MSG msg;
         while (PeekMessageA(&msg, 0, 0, 0, PM_REMOVE)) {
@@ -45,5 +41,8 @@ int main() {
                 DispatchMessageA(&msg);
             }
         }
+        std::chrono::time_point currentTime = std::chrono::system_clock::now();
+        ::Update(currentTime - lastFrameTime);
+        lastFrameTime = std::chrono::system_clock::now();
     }
 }

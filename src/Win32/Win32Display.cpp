@@ -50,6 +50,10 @@ void Win32Display::Show() {
     ShowWindow(m_hwnd, SW_NORMAL);
 }
 
+void Win32Display::Present()
+{
+}
+
 HWND& const Win32Display::GetWindowHandle()
 {
     return m_hwnd;

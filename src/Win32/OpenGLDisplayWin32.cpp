@@ -102,6 +102,14 @@ bool OpenGLWin32Display::Init(std::string i_title, uint32_t width, uint32_t heig
 	return true;
 }
 
+void OpenGLWin32Display::Present()
+{
+	if (m_renderingContenxt != nullptr)
+	{
+		SwapBuffers(m_DC);
+	}
+}
+
 OpenGLWin32Display::~OpenGLWin32Display() {
 	if (m_renderingContenxt != nullptr)
 	{
