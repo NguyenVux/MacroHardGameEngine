@@ -101,3 +101,14 @@ bool OpenGLWin32Display::Init(std::string i_title, uint32_t width, uint32_t heig
 	wglMakeCurrent(m_DC,m_renderingContenxt);
 	return true;
 }
+
+OpenGLWin32Display::~OpenGLWin32Display() {
+	if (m_renderingContenxt != nullptr)
+	{
+		if (m_DC != nullptr)
+		{
+			wglMakeCurrent(m_DC, nullptr);
+		}
+		wglDeleteContext(m_renderingContenxt);
+	}
+}
