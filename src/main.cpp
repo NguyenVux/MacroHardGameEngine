@@ -5,7 +5,7 @@
 #include <memory>
 #include <chrono>
 extern void Update(std::chrono::duration<float> i_delta);
-extern void EntryPoint();
+extern void EntryPoint(std::unique_ptr<IDisplay> i_display);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	Win32Display* windowsExtraData = reinterpret_cast<Win32Display*>((LONG_PTR)GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -28,7 +28,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int main() {
     bool running = true;
-    ::EntryPoint();
+    std::unique_ptr<OpenGLWin32Display> display(new OpenGLWin32Display("main"));
+    ::EntryPoint(std::move(display));
     std::chrono::time_point lastFrameTime = std::chrono::system_clock::now();
     while (running) {
         MSG msg;
