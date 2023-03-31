@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
+project(MacroHardGameEngine)
 set(CMAKE_CXX_STANDARD 17)
 
 set(COMMON_SOURCES  "src/main.cpp" "include/IDisplay.h" )
@@ -17,7 +18,6 @@ list(
 endif()
 
 if(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR})
-project(MacroHardGameEngine)
 add_executable(${PROJECT_NAME} ${COMMON_SOURCES}  ${PLATFORM_SOURCES})
 else()
 add_library(${PROJECT_NAME} STATIC ${COMMON_SOURCES}  ${PLATFORM_SOURCES})
