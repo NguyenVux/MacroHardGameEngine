@@ -23,7 +23,7 @@ std::string GetLastErrorAsString()
 }
 
 
-void OpenGLWin32Display::LoadGL()
+LoadGLResult OpenGLWin32Display::LoadGL()
 {
 	Win32Display dummyWindow("dummyWindow");
 	dummyWindow.Init("title",300,300);
@@ -38,16 +38,21 @@ void OpenGLWin32Display::LoadGL()
 	pfd.cStencilBits = 8;
 	pfd.iLayerType = PFD_MAIN_PLANE;
 	int pixelFormatResult = ChoosePixelFormat(dummyWindow.GetDC(), &pfd);
-	std::string abc = "";
 	SetPixelFormat(dummyWindow.GetDC(), pixelFormatResult, &pfd);
 	HGLRC dummyContext = wglCreateContext(dummyWindow.GetDC());
 	wglMakeCurrent(dummyWindow.GetDC(), dummyContext);
+
+	if(dummyContext == nullptr)
+	{
+		return (LoadGLError(LoadGLErrorCode::OpenGLNotSupported));
+	}
 
 	wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
 	wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
 
 	wglMakeCurrent(dummyWindow.GetDC(), 0);
 	wglDeleteContext(dummyContext);
+	return (LoadGLResult());
 }
 
 OpenGLWin32Display::OpenGLWin32Display(std::string i_className) : 
@@ -57,13 +62,23 @@ OpenGLWin32Display::OpenGLWin32Display(std::string i_className) :
 
 }
 
-bool OpenGLWin32Display::Init(std::string i_title, uint32_t width, uint32_t height) {
-	LoadGL();
-	bool baseResult = Win32Display::Init(i_title, width, height);
-	if (!baseResult)
+DisplayInitResult OpenGLWin32Display::Init(std::string i_title, uint32_t width, uint32_t height) {
+	//Load OpenGL to load 2 funtion
 	{
-		std::string erro = GetLastErrorAsString();
-		return false;
+		LoadGLResult loadGlResult = LoadGL();
+		if(loadGlResult != MHTL::success)
+		{
+			return DisplayInitError(DisplayInitErrorCode::CannotInitDisplay, loadGlResult.error().what());
+		}
+	}
+
+	//Init Base win32 display
+	{
+		DisplayInitResult baseResult = Win32Display::Init(i_title, width, height);
+		if (baseResult != MHTL::success)
+		{
+			return DisplayInitError(DisplayInitErrorCode::CannotInitDisplay, baseResult.error().what());
+		}
 	}
 
 	int pixelFormatAttribs[] = {
@@ -84,22 +99,21 @@ bool OpenGLWin32Display::Init(std::string i_title, uint32_t width, uint32_t heig
 	PIXELFORMATDESCRIPTOR pfd{};
 	DescribePixelFormat(m_DC, formatArray, sizeof(pfd), &pfd);
 
-	// Specify that we want to create an OpenGL 3.3 core profile context
-	int gl33_attribs[] = {
+	// Specify that we want to create an OpenGL 4.6 core profile context
+	int gl46_attribs[] = {
 		WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
 		WGL_CONTEXT_MINOR_VERSION_ARB, 6,
 		WGL_CONTEXT_PROFILE_MASK_ARB,  WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
 		0,
 	};
 	SetPixelFormat(m_DC, formatArray, &pfd);
-	m_renderingContenxt = wglCreateContextAttribsARB(m_DC, 0, gl33_attribs);
-	if (m_renderingContenxt == nullptr)
+	m_renderingContenxt = wglCreateContextAttribsARB(m_DC, 0, gl46_attribs);
+	if (m_renderingContenxt == nullptr || true)
 	{
-		auto a = GetLastErrorAsString();
-		return false;
+		return (DisplayInitError(DisplayInitErrorCode::CannotInitDisplay,GetLastErrorAsString()));
 	}
 	wglMakeCurrent(m_DC,m_renderingContenxt);
-	return true;
+	return (DisplayInitResult());
 }
 
 void OpenGLWin32Display::Present()

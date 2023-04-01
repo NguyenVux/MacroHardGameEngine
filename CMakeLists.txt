@@ -24,4 +24,4 @@ add_library(${PROJECT_NAME} STATIC ${COMMON_SOURCES}  ${PLATFORM_SOURCES})
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
-target_link_libraries(${PROJECT_NAME} "opengl32.lib")
+target_link_libraries(${PROJECT_NAME} "opengl32.lib" "MHTL")

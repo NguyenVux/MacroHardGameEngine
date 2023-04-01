@@ -12,7 +12,7 @@ Win32Display::Win32Display(std::string i_className):
     m_className = i_className;
 }
 
-bool Win32Display::Init(std::string i_title,uint32_t width, uint32_t height) {
+DisplayInitResult Win32Display::Init(std::string i_title,uint32_t width, uint32_t height) {
     WNDCLASS window_class = {};
     window_class.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
     window_class.lpfnWndProc = WndProc;
@@ -21,7 +21,7 @@ bool Win32Display::Init(std::string i_title,uint32_t width, uint32_t height) {
     window_class.hbrBackground = 0;
     window_class.lpszClassName = m_className.c_str();
     if (!RegisterClass(&window_class)) {
-        return false;
+        return DisplayInitError(DisplayInitErrorCode::CannotInitDisplay, "Failed to Create WNDCLASS");
     }
 
     m_hwnd = CreateWindow(
@@ -37,13 +37,14 @@ bool Win32Display::Init(std::string i_title,uint32_t width, uint32_t height) {
         GetModuleHandle(nullptr),
         0);
     if (!m_hwnd) {
-        return false;
+        return DisplayInitError(DisplayInitErrorCode::CannotInitDisplay, "Failed to Create Window handle");
     }
     m_DC = ::GetDC(m_hwnd);
     if (!m_DC) {
-        return false;
+        return DisplayInitError(DisplayInitErrorCode::CannotInitDisplay, "Failed to get Device Context");
     }
     SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
+    return (DisplayInitResult());
 }
 
 void Win32Display::Show() {
