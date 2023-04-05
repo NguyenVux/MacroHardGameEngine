@@ -133,4 +133,5 @@ OpenGLWin32Display::~OpenGLWin32Display() {
 		}
 		wglDeleteContext(m_renderingContenxt);
 	}
+	DestroyWindow(m_hwnd);
 }

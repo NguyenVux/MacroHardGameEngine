@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 project(MacroHardGameEngine)
 set(CMAKE_CXX_STANDARD 17)
 
-set(COMMON_SOURCES  "src/main.cpp" "include/IDisplay.h" )
+set(COMMON_SOURCES  "src/main.cpp" "include/IDisplay.h"  "include/ISystemLifeCycle.h" "src/SystemLifeCycle.h" "src/SystemLifeCycle.cpp" "include/IDisplaySystem.h" "include/ISystem.h")
 set(PLATFORM_SOURCES )
 if(UNIX)
 
@@ -14,6 +14,10 @@ list(
 	"src/Win32/GL/wglext.h" 
 	"src/Win32/OpenGLDisplayWin32.h"
 	"src/Win32/OpenGLDisplayWin32.cpp"
+	"src/Win32/DisplaySystem.h"
+	"src/Win32/DisplaySystem.cpp"
+	"src/win32/Win32System.h" 
+	"src/win32/Win32System.cpp"
 )
 endif()
 

@@ -1,11 +1,12 @@
 #include "Win32/GL/wglext.h"
 #include <windows.h>
-#include "Win32/OpenGLDisplayWin32.h"
+#include "Win32/Win32System.h"
+#include "Win32/Win32Display.h"
 #include <iostream>
 #include <memory>
 #include <chrono>
-extern void Update(std::chrono::duration<float> i_delta);
-extern void EntryPoint(std::unique_ptr<IDisplay> i_display);
+
+extern void EntryPoint(std::shared_ptr<ISystem> i_system);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	Win32Display* windowsExtraData = reinterpret_cast<Win32Display*>((LONG_PTR)GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -28,8 +29,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int main() {
     bool running = true;
-    std::unique_ptr<OpenGLWin32Display> display(new OpenGLWin32Display("main"));
-    ::EntryPoint(std::move(display));
+    std::shared_ptr<ISystem> system = std::make_shared<Win32System>();
+    ::EntryPoint(system);
     std::chrono::time_point lastFrameTime = std::chrono::system_clock::now();
     while (running) {
         MSG msg;
@@ -43,7 +44,8 @@ int main() {
             }
         }
         std::chrono::time_point currentTime = std::chrono::system_clock::now();
-        ::Update(currentTime - lastFrameTime);
+        std::chrono::duration<float> dt = currentTime - lastFrameTime;
+        system->GetSystemLifeCycle()->Update(dt.count());
         lastFrameTime = std::chrono::system_clock::now();
     }
 }

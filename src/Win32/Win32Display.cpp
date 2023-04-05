@@ -55,12 +55,12 @@ void Win32Display::Present()
 {
 }
 
-HWND& const Win32Display::GetWindowHandle()
+HWND const Win32Display::GetWindowHandle()
 {
     return m_hwnd;
 }
 
-HDC& const Win32Display::GetDC()
+HDC const Win32Display::GetDC()
 {
     return m_DC;
 }
