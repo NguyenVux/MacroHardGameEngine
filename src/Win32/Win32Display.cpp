@@ -21,7 +21,10 @@ DisplayInitResult Win32Display::Init(std::string i_title,uint32_t width, uint32_
     window_class.hbrBackground = 0;
     window_class.lpszClassName = m_className.c_str();
     if (!RegisterClass(&window_class)) {
-        return DisplayInitError(DisplayInitErrorCode::CannotInitDisplay, "Failed to Create WNDCLASS");
+        DWORD err = GetLastError();
+        if (err != ERROR_CLASS_ALREADY_EXISTS) {
+            return DisplayInitError(DisplayInitErrorCode::CannotInitDisplay, "Failed to Create WNDCLASS");
+        }
     }
 
     m_hwnd = CreateWindow(
